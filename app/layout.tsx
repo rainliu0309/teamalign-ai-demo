@@ -1,0 +1,56 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("host") ?? "localhost:3000";
+  const protocol = host.startsWith("localhost") ? "http" : "https";
+  const ogImage = `${protocol}://${host}/og.png`;
+
+  return {
+    title: "TeamAlign AI · 协齐 AI 项目协作助手",
+    description: "从会议纪要到任务、风险与项目文档，让团队始终对齐交付。",
+    icons: {
+      icon: "/favicon.svg",
+      shortcut: "/favicon.svg",
+    },
+    openGraph: {
+      title: "TeamAlign AI · 协齐 AI 项目协作助手",
+      description: "让每一次讨论，都成为清晰的下一步。",
+      type: "website",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: "TeamAlign AI" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "TeamAlign AI · 协齐 AI 项目协作助手",
+      description: "让每一次讨论，都成为清晰的下一步。",
+      images: [ogImage],
+    },
+  };
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="zh-CN">
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {children}
+      </body>
+    </html>
+  );
+}
