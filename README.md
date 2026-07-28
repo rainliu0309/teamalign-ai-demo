@@ -1,6 +1,6 @@
 # TeamAlign AI · 协齐 AI 项目协作助手
 
-> Lightweight AI project tool that turns meetings into tasks, risk alerts, and reports.<br>
+> A lightweight AI project tool that turns meetings into tasks, risk alerts, and reports.<br>
 > 将会议内容转化为任务、风险预警和项目报告的轻量化 AI 项目协作工具。
 
 ### [🚀 Live Demo · 在线体验]()
