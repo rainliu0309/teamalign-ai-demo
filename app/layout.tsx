@@ -20,21 +20,21 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = `${protocol}://${host}/og.png`;
 
   return {
-    title: "TeamAlign AI · 协齐 AI 项目协作助手",
+    title: "TeamAlign AI",
     description: "从会议纪要到任务、风险与项目文档，让团队始终对齐交付。",
     icons: {
       icon: "/favicon.svg",
       shortcut: "/favicon.svg",
     },
     openGraph: {
-      title: "TeamAlign AI · 协齐 AI 项目协作助手",
+      title: "TeamAlign AI",
       description: "让每一次讨论，都成为清晰的下一步。",
       type: "website",
       images: [{ url: ogImage, width: 1200, height: 630, alt: "TeamAlign AI" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "TeamAlign AI · 协齐 AI 项目协作助手",
+      title: "TeamAlign AI",
       description: "让每一次讨论，都成为清晰的下一步。",
       images: [ogImage],
     },

@@ -1,11 +1,6 @@
 import assert from "node:assert/strict";
-import { access, readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
-
-const developmentPreviewMeta =
-  /<meta(?=[^>]*\bname=["']codex-preview["'])(?=[^>]*\bcontent=["']development["'])[^>]*>/i;
-const templateRoot = new URL("../", import.meta.url);
-const previewRoot = new URL("../app/_sites-preview/", import.meta.url);
 
 async function render() {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -28,64 +23,45 @@ async function render() {
   );
 }
 
-test("server-renders the starter loading skeleton", async () => {
+test("server-renders the TeamAlign AI workspace", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, developmentPreviewMeta);
-  assert.match(html, /<title>Your site is taking shape<\/title>/i);
-  assert.match(html, /Building your site/);
-  assert.match(html, /Your site is taking shape/);
-  assert.match(
-    html,
-    /Your first version will appear here automatically when it’s ready\./,
-  );
-  assert.doesNotMatch(html, /Codex/);
-  assert.match(html, /react-loading-skeleton/);
-  assert.match(html, /role="status"/);
+  assert.match(html, /<title>TeamAlign AI<\/title>/i);
+  assert.match(html, /class="app-shell active-view-0"/);
+  assert.match(html, /协齐 AI 项目协作助手/);
+  assert.match(html, />项目总览</);
+  assert.match(html, />智能任务</);
+  assert.match(html, />风险洞察</);
+  assert.match(html, />汇报中心</);
+  assert.match(html, /会议智能解析/);
+  assert.match(html, /智能任务/);
+  assert.match(html, /汇报中心/);
+  assert.doesNotMatch(html, /Your site is taking shape|Building your site|codex-preview/i);
 });
 
-test("keeps the loading skeleton scoped and disposable", async () => {
-  const [preview, css, page, layout, packageJson, files] = await Promise.all([
-    readFile(new URL("SkeletonPreview.tsx", previewRoot), "utf8"),
-    readFile(new URL("preview.css", previewRoot), "utf8"),
+test("ships stable hover states and focused workspace layouts", async () => {
+  const [page, css, layout] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../package.json", import.meta.url), "utf8"),
-    readdir(previewRoot),
   ]);
 
-  assert.deepEqual(files.sort(), ["SkeletonPreview.tsx", "preview.css"]);
-  assert.match(preview, /from "react-loading-skeleton"/);
-  assert.match(preview, /baseColor="#eceae7"/);
-  assert.match(preview, /highlightColor="#f9f8f6"/);
-  assert.match(preview, /duration=\{2\.8\}/);
-  assert.match(preview, /sites-skeleton-search-placeholder/);
-  assert.match(packageJson, /"react-loading-skeleton": "3\.5\.0"/);
+  const accountHover = css.match(/\.account:hover\s*\{([^}]*)\}/)?.[1] ?? "";
+  const teamHover = css.match(/\.team-summary-button:hover\s*\{([^}]*)\}/)?.[1] ?? "";
 
-  const shellIndex = preview.indexOf('className="sites-skeleton-shell"');
-  const statusIndex = preview.indexOf('className="sites-skeleton-status"');
-  assert.ok(shellIndex >= 0 && statusIndex > shellIndex);
-  assert.match(css, /position:\s*fixed/);
-  assert.match(css, /inset:\s*0/);
-  assert.match(css, /opacity:\s*0\.52/);
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.doesNotMatch(css, /#020617|canvas|pets|progress/i);
-  assert.doesNotMatch(
-    preview,
-    /loading-spinner|status-mark|status-progress|canvas|cookie|random/i,
-  );
-
-  assert.match(page, /export const metadata:\s*Metadata/);
-  assert.match(page, /"codex-preview": "development"/);
-  assert.match(page, /<SkeletonPreview \/>/);
-  assert.match(layout, /title:\s*"Starter Project"/);
-  assert.doesNotMatch(layout, /codex-preview|_sites-preview|themeColor|\bViewport\b/);
-  assert.doesNotMatch(css, /(^|\s)(html|body)\s*\{/m);
-
-  await assert.rejects(
-    access(new URL("public/_sites-preview", templateRoot)),
-  );
+  assert.doesNotMatch(accountHover, /\bpadding(?:-left)?\s*:/);
+  assert.doesNotMatch(teamHover, /\bpadding(?:-left)?\s*:/);
+  assert.match(css, /button:focus-visible/);
+  assert.match(css, /\.active-view-2 \.risk-list\s*\{[^}]*repeat\(2,/s);
+  assert.match(css, /\.active-view-3 \.docs-card\s*\{[^}]*grid-template-columns:/s);
+  assert.match(css, /@media \(max-width: 1180px\)[\s\S]*?\.board-columns\s*\{\s*grid-template-columns:\s*repeat\(2,/);
+  assert.match(css, /@media \(max-width: 680px\)[\s\S]*?\.board-columns\s*\{\s*grid-template-columns:\s*1fr;/);
+  assert.doesNotMatch(css, /\.board-columns\s*\{[^}]*overflow-x:\s*auto/s);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(page, /className=\{`view-header/);
+  assert.match(page, /className="doc-sources"/);
+  assert.match(layout, /title:\s*"TeamAlign AI"/);
 });
