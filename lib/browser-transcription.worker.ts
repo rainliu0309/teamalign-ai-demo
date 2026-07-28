@@ -39,30 +39,16 @@ async function getTranscriber() {
   if (transcriber) return transcriber;
 
   const { pipeline } = await import("@huggingface/transformers");
-  const useWebGpu = "gpu" in navigator;
-  const options = {
-    dtype: useWebGpu ? "fp16" : "q4",
-    ...(useWebGpu ? { device: "webgpu" } : {}),
-    progress_callback: emitProgress,
-  };
-
-  try {
-    transcriber = (await pipeline(
-      "automatic-speech-recognition",
-      "onnx-community/whisper-base",
-      options,
-    )) as typeof transcriber;
-  } catch (error) {
-    if (!useWebGpu) throw error;
-    transcriber = (await pipeline(
-      "automatic-speech-recognition",
-      "onnx-community/whisper-base",
-      {
-        dtype: "q4",
-        progress_callback: emitProgress,
-      },
-    )) as typeof transcriber;
-  }
+  // WASM q4 is more consistent across Chrome, Edge, Safari, and Firefox than
+  // experimental browser WebGPU for multilingual Whisper inference.
+  transcriber = (await pipeline(
+    "automatic-speech-recognition",
+    "onnx-community/whisper-base",
+    {
+      dtype: "q4",
+      progress_callback: emitProgress,
+    },
+  )) as typeof transcriber;
 
   return transcriber;
 }
