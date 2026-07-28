@@ -1,13 +1,13 @@
 # TeamAlign AI · 协齐 AI 项目协作助手
 
-> A bilingual AI project management and collaboration assistant for internet and e-commerce teams.<br>
-> 面向互联网、电商团队的中英双语 AI 项目管理与协作助手。
+> Lightweight AI project tool that turns meetings into tasks, risk alerts, and reports.<br>
+> 将会议内容转化为任务、风险预警和项目报告的轻量化 AI 项目协作工具。
 
 ### [🚀 Live Demo · 在线体验]()
 
-TeamAlign AI turns meeting recordings and written notes into an actionable project workspace. It combines meeting transcription, Agnes-powered structured analysis, role-based task planning, risk alerts, and report generation in one responsive web application.
+TeamAlign AI turns meeting recordings and written notes into tasks, risk alerts, and standardized project reports in one responsive workspace.
 
-TeamAlign AI 将会议录音与文字纪要转化为可执行的项目工作台，整合语音转写、基于 Agnes 的结构化分析、按岗位拆分任务、风险预警与项目汇报生成，适用于中小团队的日常协作。
+TeamAlign AI 将会议录音与文字纪要转化为任务、风险预警和标准化项目报告，并提供响应式项目协作工作台。
 
 ## Highlights · 功能亮点
 
