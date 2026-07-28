@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: teamalign-ai
+    runtime: node
+    plan: free
+    region: ohio
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 22.13.0
+      - key: AI_PROVIDER
+        value: agnes
+      - key: AGNES_BASE_URL
+        value: https://apihub.agnes-ai.com/v1
+      - key: AGNES_TEXT_MODEL
+        value: agnes-2.0-flash
+      - key: AGNES_API_KEY
+        sync: false
+      - key: LOCAL_ASR_ENABLED
+        value: "false"
+      - key: OPENAI_TRANSCRIPTION_MODEL
+        value: gpt-4o-transcribe
+      - key: OPENAI_TRANSCRIPTION_API_KEY
+        sync: false

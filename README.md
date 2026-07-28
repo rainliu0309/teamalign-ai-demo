@@ -174,7 +174,20 @@ Read the matching transcripts in [`test/README.md`](./test/README.md).
 
 **Production URL · 线上地址:**
 
-The project produces a Cloudflare Workers-compatible build:
+The repository includes a Render Blueprint in [`render.yaml`](./render.yaml). It creates a free Node web service that builds the application, starts it with `npm run start`, and checks `/api/health`.
+
+仓库已包含 Render Blueprint 配置文件 [`render.yaml`](./render.yaml)，会创建一个免费的 Node Web Service，构建应用、通过 `npm run start` 启动，并以 `/api/health` 作为健康检查。
+
+To deploy on Render:
+
+在 Render 部署时：
+
+1. Create a new **Blueprint** from this GitHub repository. / 从此 GitHub 仓库新建 **Blueprint**。
+2. Enter `AGNES_API_KEY` when Render prompts for secrets. / 在 Render 提示时填写 `AGNES_API_KEY`。
+3. Enter `OPENAI_TRANSCRIPTION_API_KEY` to enable uploaded-audio transcription. / 如需在线转写上传录音，填写 `OPENAI_TRANSCRIPTION_API_KEY`。
+4. After the first deployment succeeds, add the generated URL to the blank demo link at the top of this README. / 首次部署成功后，将生成的网址补到 README 顶部的空白体验链接。
+
+The project also produces a Cloudflare Workers-compatible build:
 
 项目可生成兼容 Cloudflare Workers 的构建产物：
 
