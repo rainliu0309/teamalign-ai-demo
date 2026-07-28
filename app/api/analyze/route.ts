@@ -1,19 +1,14 @@
 import {
   apiErrorResponse,
-  DEFAULT_LOCAL_ASR_URL,
   extractJson,
   getTextClient,
   getTextModel,
-  getTranscriptionClient,
-  getTranscriptionModel,
 } from "../../../lib/openai";
 import {
   isAnalysisDraft,
   normalizeMeetingTitle,
   type AnalysisResult,
 } from "../../../lib/teamalign";
-
-const MAX_AUDIO_BYTES = 25 * 1024 * 1024;
 
 const analysisSchema = {
   type: "object",
@@ -111,76 +106,7 @@ export async function POST(request: Request) {
     const language = formData.get("language") === "en" ? "en" : "zh";
     const projectName = String(formData.get("projectName") ?? "").trim();
     const notes = String(formData.get("notes") ?? "").trim();
-    const audio = formData.get("audio");
-
-    let transcript = notes;
-
-    if (audio instanceof File && audio.size > 0) {
-      if (audio.size > MAX_AUDIO_BYTES) {
-        return Response.json(
-          {
-            error: "AUDIO_TOO_LARGE",
-            message: "音频文件不能超过 25 MB。",
-          },
-          { status: 413 },
-        );
-      }
-
-      if (process.env.LOCAL_ASR_ENABLED === "true") {
-        const localAsrUrl =
-          process.env.LOCAL_ASR_URL?.trim() || DEFAULT_LOCAL_ASR_URL;
-        const localForm = new FormData();
-        localForm.set("file", audio, audio.name || "meeting-audio");
-        localForm.set("response_format", "json");
-        localForm.set("language", "auto");
-        localForm.set("temperature", "0.0");
-        localForm.set(
-          "prompt",
-          language === "zh"
-            ? "项目会议，保留人名、岗位、日期、工时、里程碑和产品术语。"
-            : "Project meeting. Preserve names, roles, dates, estimates, milestones and product terms.",
-        );
-
-        let localResponse: Response;
-        try {
-          localResponse = await fetch(`${localAsrUrl}/inference`, {
-            method: "POST",
-            body: localForm,
-            signal: AbortSignal.timeout(10 * 60 * 1000),
-          });
-        } catch {
-          throw new Error("LOCAL_ASR_UNAVAILABLE");
-        }
-
-        if (!localResponse.ok) {
-          throw new Error("LOCAL_ASR_FAILED");
-        }
-
-        const localResult = (await localResponse.json()) as {
-          text?: string;
-          error?: string;
-        };
-        transcript = localResult.text?.trim() ?? "";
-      } else {
-        const transcription: unknown =
-          await getTranscriptionClient().audio.transcriptions.create({
-            file: audio,
-            model: getTranscriptionModel(),
-            response_format: "text",
-            prompt:
-              language === "zh"
-                ? "这是一场互联网或电商团队的项目会议，请准确保留人名、岗位、日期、工时、里程碑与产品术语。"
-                : "This is an internet or e-commerce project meeting. Preserve names, roles, dates, estimates, milestones and product terminology.",
-          });
-
-        transcript =
-          typeof transcription === "string"
-            ? transcription
-            : String(
-                (transcription as { text?: string } | null)?.text ?? "",
-              );
-      }
-    }
+    const transcript = notes;
 
     if (!transcript || transcript.length < 20) {
       return Response.json(

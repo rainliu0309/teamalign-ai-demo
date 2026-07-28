@@ -41,6 +41,7 @@ import {
   getBrowserAsset,
   saveBrowserAsset,
 } from "../lib/browser-assets";
+import { transcribeBrowserAudio } from "../lib/browser-transcription";
 import {
   isGeneratedReport,
   normalizeMeetingTitle,
@@ -123,7 +124,7 @@ const i18n = {
     paste: "粘贴纪要",
     upload: "上传录音",
     textarea: "粘贴会议纪要、聊天记录或需求说明…",
-    supported: "支持 MP3、M4A、WAV、WEBM，单个文件不超过 25 MB",
+    supported: "支持 MP3、M4A、WAV、WEBM，浏览器本地转写，单个文件不超过 25 MB",
     choose: "选择音频文件",
     example: "已填入「6.18 大促上线评审会」示例纪要",
     analyse: "AI 开始解析",
@@ -184,7 +185,7 @@ const i18n = {
     paste: "Paste notes",
     upload: "Upload audio",
     textarea: "Paste meeting notes, chat history or a requirement brief…",
-    supported: "MP3, M4A, WAV or WEBM · up to 25 MB",
+    supported: "MP3, M4A, WAV or WEBM · browser-local transcription · up to 25 MB",
     choose: "Choose audio file",
     example: "Sample notes from the 6.18 launch review are ready",
     analyse: "Analyze with AI",
@@ -241,12 +242,10 @@ export default function Home() {
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false);
   const [apiConfigured, setApiConfigured] = useState<boolean | null>(null);
   const [apiProvider, setApiProvider] = useState<"openai" | "agnes">("agnes");
-  const [transcriptionConfigured, setTranscriptionConfigured] = useState(false);
+  const [transcriptionConfigured, setTranscriptionConfigured] = useState(true);
   const [transcriptionProvider, setTranscriptionProvider] = useState<
-    "whisper.cpp" | "openai" | "groq" | null
-  >(null);
-  const [localAsrEnabled, setLocalAsrEnabled] = useState(false);
-  const [localAsrReady, setLocalAsrReady] = useState(false);
+    "browser" | null
+  >("browser");
   const [uiError, setUiError] = useState("");
   const [noticeOpen, setNoticeOpen] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
@@ -420,18 +419,16 @@ export default function Home() {
             configured?: boolean;
             provider?: "openai" | "agnes";
             transcriptionConfigured?: boolean;
-            transcriptionProvider?: "whisper.cpp" | "openai" | "groq" | null;
-            localAsrEnabled?: boolean;
-            localAsrReady?: boolean;
+            transcriptionProvider?: "browser" | null;
           }) => {
             setApiConfigured(Boolean(health.configured));
             setApiProvider(health.provider === "openai" ? "openai" : "agnes");
             setTranscriptionConfigured(
               Boolean(health.transcriptionConfigured),
             );
-            setTranscriptionProvider(health.transcriptionProvider ?? null);
-            setLocalAsrEnabled(Boolean(health.localAsrEnabled));
-            setLocalAsrReady(Boolean(health.localAsrReady));
+            setTranscriptionProvider(
+              health.transcriptionProvider === "browser" ? "browser" : null,
+            );
           },
         )
         .catch(() => setApiConfigured(false));
@@ -542,7 +539,15 @@ export default function Home() {
           type: meta.type,
           lastModified: meta.lastModified,
         });
-        formData.set("audio", audioFile);
+        const transcript = await transcribeBrowserAudio(audioFile, language);
+        if (transcript.length < 20) {
+          throw new Error(
+            language === "zh"
+              ? "录音转写内容过短，请改用更清晰的录音或直接粘贴会议纪要。"
+              : "The transcript is too short. Use a clearer recording or paste meeting notes.",
+          );
+        }
+        formData.set("notes", transcript);
       } else {
         formData.set("notes", notes);
       }
@@ -1638,9 +1643,9 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="settings-row">
-                  <div><strong>{language === "zh" ? "本地语音转写" : "Local transcription"}</strong><small>whisper.cpp · small-q5_1</small></div>
-                  <span className={`service-pill ${localAsrReady ? "ready" : ""}`}>
-                    <span />{localAsrReady ? language === "zh" ? "已就绪" : "Ready" : language === "zh" ? "未启动" : "Offline"}
+                  <div><strong>{language === "zh" ? "浏览器本地转写" : "Browser-local transcription"}</strong><small>Whisper base · on this device</small></div>
+                  <span className="service-pill ready">
+                    <span />{language === "zh" ? "可用" : "Available"}
                   </span>
                 </div>
                 <div className="settings-row">
@@ -1982,14 +1987,10 @@ export default function Home() {
                     <p>
                       {fileName
                         ? `${((currentProject.audioFileMeta?.size ?? 0) / 1024 / 1024).toFixed(1)} MB · ${language === "zh" ? "已安全保存到本机" : "Saved securely on this device"}`
-                        : localAsrReady && transcriptionProvider === "whisper.cpp"
+                        : transcriptionProvider === "browser"
                           ? language === "zh"
-                            ? "本地 Whisper 已就绪 · 录音不会离开本机"
-                            : "Local Whisper is ready · audio stays on this device"
-                          : localAsrEnabled
-                            ? language === "zh"
-                              ? "本地 Whisper 未启动 · 请在终端运行 npm run asr"
-                              : "Local Whisper is offline · run npm run asr"
+                            ? "浏览器本地转写 · 音频不会发送至第三方转写服务"
+                            : "Browser-local transcription · audio is not sent to a transcription service"
                         : !transcriptionConfigured && apiProvider === "agnes"
                           ? language === "zh"
                             ? "Agnes 不含语音转写；本地转写尚未配置"
