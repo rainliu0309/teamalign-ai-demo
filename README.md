@@ -11,8 +11,8 @@ TeamAlign AI 将会议录音与文字纪要转化为任务、风险预警和标�
 
 ## Highlights · 功能亮点
 
-- **Meeting intelligence · 会议智能解析** — Paste notes or upload MP3, M4A, WAV, and WEBM recordings; transcribe with a local whisper.cpp service or a compatible cloud transcription API.<br>
-  粘贴会议纪要或上传 MP3、M4A、WAV、WEBM 录音；可使用本地 whisper.cpp 或兼容的云端转写接口。
+- **Meeting intelligence · 会议智能解析** — Paste notes or upload MP3, M4A, WAV, and WEBM recordings; transcription runs locally in the browser without an extra API key.<br>
+  粘贴会议纪要或上传 MP3、M4A、WAV、WEBM 录音；语音转写在浏览器本地完成，无需额外 API Key。
 - **Role-based task planning · 按岗位拆分任务** — Convert meeting decisions into actionable tasks with roles, owners, priority, estimates, deadlines, status, and progress.<br>
   将会议结论拆解为包含岗位、负责人、优先级、预计工时、截止时间、状态与进度的可执行任务。
 - **Risk insights · 项目风险洞察** — Detect schedule, resource, dependency, scope, and quality risks, then retain read, mitigated, and reopened states.<br>
@@ -35,7 +35,7 @@ Browser UI
    ▼
 Next.js + vinext application
    ├── localStorage + IndexedDB workspace persistence
-   ├── local whisper.cpp or cloud transcription API
+   ├── browser-local Whisper transcription
    ├── Agnes OpenAI-compatible structured analysis
    └── report preview + DOCX generation
 ```
@@ -53,10 +53,11 @@ teamalign-ai-demo/
 │   └── page.tsx               # Main workspace / 主工作台
 ├── lib/
 │   ├── browser-assets.ts      # IndexedDB audio and file helpers / 浏览器文件持久化
+│   ├── browser-transcription.ts # Browser-local audio decoding / 浏览器本地音频解析
+│   ├── browser-transcription.worker.ts # Browser-local Whisper worker / 浏览器本地 Whisper Worker
 │   ├── openai.ts              # Agnes/OpenAI-compatible client / AI 客户端
 │   ├── teamalign.ts           # Shared domain models / 项目领域模型
 │   └── workspaces.ts          # Isolated project workspaces / 项目工作空间
-├── scripts/                   # Local whisper.cpp launch scripts / 本地 ASR 启动脚本
 ├── test/                      # Upload-ready sample audio / 可上传的测试音频
 ├── tests/                     # Automated validation / 自动化测试
 ├── .env.example               # Safe configuration template / 安全配置模板
@@ -69,7 +70,7 @@ teamalign-ai-demo/
 - Node.js `>= 22.13.0`
 - npm
 - An Agnes API key or OpenAI-compatible API key / Agnes API 密钥或兼容 OpenAI 协议的 API 密钥
-- Optional: a local whisper.cpp service for free local transcription / 可选：用于免费本地转写的 whisper.cpp 服务
+- A modern desktop browser; Chrome or Edge is recommended for faster local transcription / 现代桌面浏览器；推荐 Chrome 或 Edge 以获得更快的本地转写体验
 
 ## Configuration · 环境配置
 
@@ -124,26 +125,15 @@ Open the URL shown in the terminal, normally `http://localhost:3000`.
 
 在浏览器中打开终端显示的地址，通常为 `http://localhost:3000`。
 
-### 4. Optional: start local transcription · 可选：启动本地语音转写
+### 4. Browser-local transcription · 浏览器本地转写
 
-After placing `whisper-server` and the selected Whisper model under `.local/whisper.cpp`, run:
+Upload a recording from the meeting analysis screen. TeamAlign downloads and caches a compact multilingual Whisper model in the browser, transcribes the audio locally, then sends only the transcript to Agnes for task, risk, and report generation.
 
-将 `whisper-server` 和选用的 Whisper 模型准备到 `.local/whisper.cpp` 后，运行：
+在会议解析页上传录音后，TeamAlign 会在浏览器中下载并缓存轻量多语言 Whisper 模型，在本机完成转写；随后仅将转写文本发送给 Agnes，用于生成任务、风险和报告。
 
-```bash
-npm run asr
-```
+No OpenAI, Groq, or separate transcription key is required.
 
-To start the local ASR service and web application together:
-
-同时启动本地 ASR 服务和网页应用：
-
-```bash
-npm run dev:full
-```
-
-> Agnes is used for structured text analysis in this project. It is not used as the transcription provider.<br>
-> 本项目中的 Agnes 用于会议文本的结构化分析，不承担语音转写。
+无需 OpenAI、Groq 或独立的语音转写 Key。
 
 ## Sample Audio · 测试音频
 
@@ -163,8 +153,6 @@ Read the matching transcripts in [`test/README.md`](./test/README.md).
 | Command | Description / 说明 |
 |---|---|
 | `npm run dev` | Start the local web development server / 启动本地网页开发服务 |
-| `npm run asr` | Start local whisper.cpp transcription / 启动本地 whisper.cpp 转写服务 |
-| `npm run dev:full` | Start ASR and the web application together / 同时启动转写与网页服务 |
 | `npm run build` | Create a production build / 构建生产版本 |
 | `npm test` | Build and run automated tests / 构建并运行自动化测试 |
 | `npm run lint` | Run ESLint / 运行 ESLint |
@@ -184,8 +172,7 @@ To deploy on Render:
 
 1. Create a new **Blueprint** from this GitHub repository. / 从此 GitHub 仓库新建 **Blueprint**。
 2. Enter `AGNES_API_KEY` when Render prompts for secrets. / 在 Render 提示时填写 `AGNES_API_KEY`。
-3. Enter `GROQ_API_KEY` to enable uploaded-audio transcription with Groq's free tier. / 如需通过 Groq 免费层在线转写上传录音，填写 `GROQ_API_KEY`。
-4. After the first deployment succeeds, add the generated URL to the blank demo link at the top of this README. / 首次部署成功后，将生成的网址补到 README 顶部的空白体验链接。
+3. After the first deployment succeeds, add the generated URL to the blank demo link at the top of this README. / 首次部署成功后，将生成的网址补到 README 顶部的空白体验链接。
 
 The project also produces a Cloudflare Workers-compatible build:
 
@@ -203,15 +190,15 @@ For a production-ready multi-user setup, replace browser-local persistence with 
 
 如需生产级多成员协作，请将浏览器本地数据迁移至数据库与对象存储，并补充登录认证和工作空间权限控制。
 
-> **Transcription note / 转写说明:** A local service at `127.0.0.1:8080` cannot be accessed by an online deployment. Use a public Whisper service or a cloud transcription API for uploaded recordings in production.<br>
-> 本地 `127.0.0.1:8080` 服务无法被线上部署访问。生产环境请使用公网 Whisper 服务或云端转写 API。
+> **Transcription note / 转写说明:** The first audio transcription downloads a browser-local model and can take longer, especially on a slower device. Later uses reuse the browser cache. The uploaded audio is not sent to a third-party transcription API.<br>
+> 首次录音转写需要下载浏览器本地模型，性能较弱设备耗时会更长；后续会复用浏览器缓存。上传的音频不会发送到第三方转写 API。
 
 ## API Reference · 接口说明
 
 | Method | Endpoint | Description / 说明 |
 |---|---|---|
-| `GET` | `/api/health` | Check AI and ASR configuration / 检查 AI 与 ASR 配置状态 |
-| `POST` | `/api/analyze` | Transcribe and analyze meeting content / 转写并分析会议内容 |
+| `GET` | `/api/health` | Check AI and browser-transcription availability / 检查 AI 与浏览器转写状态 |
+| `POST` | `/api/analyze` | Analyze a transcript into project actions / 将会议文字分析为项目行动项 |
 | `POST` | `/api/report` | Generate report previews and DOCX files / 生成报告预览与 DOCX 文件 |
 
 ## Security Notes · 安全说明
@@ -219,7 +206,7 @@ For a production-ready multi-user setup, replace browser-local persistence with 
 - Keep API keys in `.env.local` or your hosting platform's secret manager only. / API 密钥仅保存在 `.env.local` 或部署平台的密钥管理中。
 - `.env.local`, `.local/`, build output, and local Wrangler state are excluded from Git. / `.env.local`、`.local/`、构建产物和本地 Wrangler 状态已被 Git 排除。
 - Revoke and rotate any key that has ever been exposed. / 若密钥曾被公开，请立即撤销并重新生成。
-- Review meeting content before sending it to an external AI or transcription provider. / 向外部 AI 或转写服务发送会议内容前，请确认内容允许被处理。
+- Audio transcription runs in the browser; only the resulting transcript is sent to the configured AI provider. / 音频在浏览器本地转写；仅生成的文字会发送至已配置的 AI 服务。
 
 ## Copyright · 版权声明
 

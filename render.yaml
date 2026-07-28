@@ -19,11 +19,3 @@ services:
         value: agnes-2.0-flash
       - key: AGNES_API_KEY
         sync: false
-      - key: LOCAL_ASR_ENABLED
-        value: "false"
-      - key: TRANSCRIPTION_PROVIDER
-        value: groq
-      - key: GROQ_TRANSCRIPTION_MODEL
-        value: whisper-large-v3-turbo
-      - key: GROQ_API_KEY
-        sync: false
