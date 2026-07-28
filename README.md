@@ -129,7 +129,7 @@ Open the URL shown in the terminal, normally `http://localhost:3000`.
 
 Upload a recording from the meeting analysis screen and choose the language spoken in it. TeamAlign downloads and caches a multilingual Whisper Small model in the browser, transcribes the audio locally, then sends only the transcript to Agnes for task, risk, and report generation.
 
-在会议解析页上传录音后，请选择录音实际使用的语言。TeamAlign 会在浏览器中下载并缓存多语言 Whisper Small 模型，在本机完成转写；随后仅将转写文本发送给 Agnes，用于生成任务、风险和报告。
+在会议解析页上传录音后，请选择录音实际使用的语言。TeamAlign 会在浏览器中下载并缓存多语言 Whisper Small 模型，在本机完成转写；中文转写会自动统一为简体中文。随后仅将转写文本发送给 Agnes，用于生成任务、风险和报告。
 
 No OpenAI, Groq, or separate transcription key is required.
 

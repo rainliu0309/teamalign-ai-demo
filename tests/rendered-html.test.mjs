@@ -69,6 +69,7 @@ test("ships stable hover states and focused workspace layouts", async () => {
   assert.match(page, /audioLanguage/);
   assert.match(page, /Recording language/);
   assert.match(transcriptionWorker, /onnx-community\/whisper-small/);
+  assert.match(transcriptionWorker, /opencc-js\/t2cn/);
   assert.doesNotMatch(page, /GROQ_API_KEY|OPENAI_TRANSCRIPTION_API_KEY/);
   assert.match(renderBlueprint, /AGNES_API_KEY/);
   assert.doesNotMatch(renderBlueprint, /GROQ_API_KEY|OPENAI_TRANSCRIPTION_API_KEY/);

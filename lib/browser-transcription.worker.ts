@@ -1,3 +1,5 @@
+import OpenCC from "opencc-js/t2cn";
+
 type WorkerRequest = {
   type: "transcribe";
   audio: ArrayBuffer;
@@ -19,6 +21,8 @@ let transcriber: ((
   audio: Float32Array,
   options: Record<string, unknown>,
 ) => Promise<{ text?: string }>) | null = null;
+
+const traditionalToSimplified = OpenCC.Converter({ from: "t", to: "cn" });
 
 function emitProgress(progress: ProgressPayload) {
   const percent =
@@ -65,7 +69,9 @@ workerScope.onmessage = async (event) => {
       chunk_length_s: 30,
       stride_length_s: 5,
     });
-    const text = result.text?.trim() ?? "";
+    const rawText = result.text?.trim() ?? "";
+    const text =
+      event.data.language === "zh" ? traditionalToSimplified(rawText) : rawText;
     if (text.length < 1) {
       throw new Error("浏览器未能从该录音中识别出有效文字。");
     }
