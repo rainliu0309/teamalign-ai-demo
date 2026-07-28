@@ -11,8 +11,8 @@ TeamAlign AI 将会议录音与文字纪要转化为任务、风险预警和标�
 
 ## Highlights · 功能亮点
 
-- **Meeting intelligence · 会议智能解析** — Paste notes or upload MP3, M4A, WAV, and WEBM recordings; transcription runs locally in the browser without an extra API key.<br>
-  粘贴会议纪要或上传 MP3、M4A、WAV、WEBM 录音；语音转写在浏览器本地完成，无需额外 API Key。
+- **Meeting intelligence · 会议智能解析** — Paste notes or upload MP3, M4A, WAV, and WEBM recordings; choose Chinese or English for browser-local transcription with no extra API key.<br>
+  粘贴会议纪要或上传 MP3、M4A、WAV、WEBM 录音；选择中文或英文录音语言，在浏览器本地完成转写，无需额外 API Key。
 - **Role-based task planning · 按岗位拆分任务** — Convert meeting decisions into actionable tasks with roles, owners, priority, estimates, deadlines, status, and progress.<br>
   将会议结论拆解为包含岗位、负责人、优先级、预计工时、截止时间、状态与进度的可执行任务。
 - **Risk insights · 项目风险洞察** — Detect schedule, resource, dependency, scope, and quality risks, then retain read, mitigated, and reopened states.<br>
@@ -127,9 +127,9 @@ Open the URL shown in the terminal, normally `http://localhost:3000`.
 
 ### 4. Browser-local transcription · 浏览器本地转写
 
-Upload a recording from the meeting analysis screen. TeamAlign downloads and caches a compact multilingual Whisper model in the browser, transcribes the audio locally, then sends only the transcript to Agnes for task, risk, and report generation.
+Upload a recording from the meeting analysis screen and choose the language spoken in it. TeamAlign downloads and caches a multilingual Whisper Small model in the browser, transcribes the audio locally, then sends only the transcript to Agnes for task, risk, and report generation.
 
-在会议解析页上传录音后，TeamAlign 会在浏览器中下载并缓存轻量多语言 Whisper 模型，在本机完成转写；随后仅将转写文本发送给 Agnes，用于生成任务、风险和报告。
+在会议解析页上传录音后，请选择录音实际使用的语言。TeamAlign 会在浏览器中下载并缓存多语言 Whisper Small 模型，在本机完成转写；随后仅将转写文本发送给 Agnes，用于生成任务、风险和报告。
 
 No OpenAI, Groq, or separate transcription key is required.
 
@@ -190,8 +190,8 @@ For a production-ready multi-user setup, replace browser-local persistence with 
 
 如需生产级多成员协作，请将浏览器本地数据迁移至数据库与对象存储，并补充登录认证和工作空间权限控制。
 
-> **Transcription note / 转写说明:** The first audio transcription downloads a browser-local model and can take longer, especially on a slower device. Later uses reuse the browser cache. The uploaded audio is not sent to a third-party transcription API.<br>
-> 首次录音转写需要下载浏览器本地模型，性能较弱设备耗时会更长；后续会复用浏览器缓存。上传的音频不会发送到第三方转写 API。
+> **Transcription note / 转写说明:** Choose the language actually spoken in the recording; it is independent from the interface language. The first audio transcription downloads a browser-local Whisper Small model and can take longer, especially on a slower device. Later uses reuse the browser cache. The uploaded audio is not sent to a third-party transcription API.<br>
+> 请按录音实际语言选择中文或英文，它独立于网页界面语言。首次录音转写需要下载浏览器本地 Whisper Small 模型，性能较弱设备耗时会更长；后续会复用浏览器缓存。上传的音频不会发送到第三方转写 API。
 
 ## API Reference · 接口说明
 

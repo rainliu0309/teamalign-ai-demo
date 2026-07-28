@@ -43,11 +43,12 @@ test("server-renders the TeamAlign AI workspace", async () => {
 });
 
 test("ships stable hover states and focused workspace layouts", async () => {
-  const [page, css, layout, renderBlueprint] = await Promise.all([
+  const [page, css, layout, renderBlueprint, transcriptionWorker] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../render.yaml", import.meta.url), "utf8"),
+    readFile(new URL("../lib/browser-transcription.worker.ts", import.meta.url), "utf8"),
   ]);
 
   const accountHover = css.match(/\.account:hover\s*\{([^}]*)\}/)?.[1] ?? "";
@@ -65,6 +66,9 @@ test("ships stable hover states and focused workspace layouts", async () => {
   assert.match(page, /className=\{`view-header/);
   assert.match(page, /className="doc-sources"/);
   assert.match(page, /transcribeBrowserAudio/);
+  assert.match(page, /audioLanguage/);
+  assert.match(page, /Recording language/);
+  assert.match(transcriptionWorker, /onnx-community\/whisper-small/);
   assert.doesNotMatch(page, /GROQ_API_KEY|OPENAI_TRANSCRIPTION_API_KEY/);
   assert.match(renderBlueprint, /AGNES_API_KEY/);
   assert.doesNotMatch(renderBlueprint, /GROQ_API_KEY|OPENAI_TRANSCRIPTION_API_KEY/);

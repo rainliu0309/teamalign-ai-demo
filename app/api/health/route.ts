@@ -14,6 +14,6 @@ export async function GET() {
     transcriptionProvider: "browser",
     localAsrEnabled: false,
     localAsrReady: false,
-    transcriptionModel: "whisper-base (browser)",
+    transcriptionModel: "whisper-small (browser)",
   });
 }

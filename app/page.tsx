@@ -124,7 +124,7 @@ const i18n = {
     paste: "粘贴纪要",
     upload: "上传录音",
     textarea: "粘贴会议纪要、聊天记录或需求说明…",
-    supported: "支持 MP3、M4A、WAV、WEBM，浏览器本地转写，单个文件不超过 25 MB",
+    supported: "支持 MP3、M4A、WAV、WEBM；选择录音语言可获得更准确转写，单个文件不超过 25 MB",
     choose: "选择音频文件",
     example: "已填入「6.18 大促上线评审会」示例纪要",
     analyse: "AI 开始解析",
@@ -185,7 +185,7 @@ const i18n = {
     paste: "Paste notes",
     upload: "Upload audio",
     textarea: "Paste meeting notes, chat history or a requirement brief…",
-    supported: "MP3, M4A, WAV or WEBM · browser-local transcription · up to 25 MB",
+    supported: "MP3, M4A, WAV or WEBM · choose the recording language for better accuracy · up to 25 MB",
     choose: "Choose audio file",
     example: "Sample notes from the 6.18 launch review are ready",
     analyse: "Analyze with AI",
@@ -235,6 +235,7 @@ const i18n = {
 
 export default function Home() {
   const [language, setLanguage] = useState<Language>("zh");
+  const [audioLanguage, setAudioLanguage] = useState<Language>("zh");
   const [activeNav, setActiveNav] = useState(0);
   const [workspace, setWorkspace] = useState<PersistedWorkspace>(
     cloneInitialWorkspace,
@@ -539,7 +540,7 @@ export default function Home() {
           type: meta.type,
           lastModified: meta.lastModified,
         });
-        const transcript = await transcribeBrowserAudio(audioFile, language);
+        const transcript = await transcribeBrowserAudio(audioFile, audioLanguage);
         if (transcript.length < 20) {
           throw new Error(
             language === "zh"
@@ -1643,7 +1644,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="settings-row">
-                  <div><strong>{language === "zh" ? "浏览器本地转写" : "Browser-local transcription"}</strong><small>Whisper base · on this device</small></div>
+                  <div><strong>{language === "zh" ? "浏览器本地转写" : "Browser-local transcription"}</strong><small>Whisper small · on this device</small></div>
                   <span className="service-pill ready">
                     <span />{language === "zh" ? "可用" : "Available"}
                   </span>
@@ -1966,7 +1967,15 @@ export default function Home() {
                   </div>
                 </div>
               ) : (
-                <div
+                <>
+                  <div className="audio-language-picker" aria-label={language === "zh" ? "选择录音语言" : "Choose recording language"}>
+                    <span>{language === "zh" ? "录音语言" : "Recording language"}</span>
+                    <div className="audio-language-options">
+                      <button type="button" className={audioLanguage === "zh" ? "active" : ""} onClick={() => setAudioLanguage("zh")}>中文</button>
+                      <button type="button" className={audioLanguage === "en" ? "active" : ""} onClick={() => setAudioLanguage("en")}>English</button>
+                    </div>
+                  </div>
+                  <div
                   className={`upload-zone ${fileName ? "has-file" : ""}`}
                   onDragOver={(event) => event.preventDefault()}
                   onDrop={(event) => { event.preventDefault(); chooseFile(event.dataTransfer.files[0]); }}
@@ -1989,8 +1998,8 @@ export default function Home() {
                         ? `${((currentProject.audioFileMeta?.size ?? 0) / 1024 / 1024).toFixed(1)} MB · ${language === "zh" ? "已安全保存到本机" : "Saved securely on this device"}`
                         : transcriptionProvider === "browser"
                           ? language === "zh"
-                            ? "浏览器本地转写 · 音频不会发送至第三方转写服务"
-                            : "Browser-local transcription · audio is not sent to a transcription service"
+                            ? "Whisper Small 本地转写 · 请选择与录音一致的语言"
+                            : "Whisper Small runs locally · select the language spoken in the recording"
                         : !transcriptionConfigured && apiProvider === "agnes"
                           ? language === "zh"
                             ? "Agnes 不含语音转写；本地转写尚未配置"
@@ -1999,7 +2008,8 @@ export default function Home() {
                     </p>
                   </div>
                   {fileName && <button className="remove-upload" onClick={(event) => { event.stopPropagation(); void removeFile(); }} aria-label={language === "zh" ? "移除音频" : "Remove audio"}><X size={15} /></button>}
-                </div>
+                  </div>
+                </>
               )}
 
               {currentProject.analysisStatus === "stale" && (
