@@ -40,10 +40,11 @@ async function getTranscriber() {
 
   const { pipeline } = await import("@huggingface/transformers");
   // WASM q4 is more consistent across Chrome, Edge, Safari, and Firefox than
-  // experimental browser WebGPU for multilingual Whisper inference.
+  // experimental browser WebGPU. Whisper small improves bilingual accuracy
+  // while keeping processing entirely in the browser.
   transcriber = (await pipeline(
     "automatic-speech-recognition",
-    "onnx-community/whisper-base",
+    "onnx-community/whisper-small",
     {
       dtype: "q4",
       progress_callback: emitProgress,

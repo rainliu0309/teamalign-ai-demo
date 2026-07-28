@@ -1195,6 +1195,44 @@ textarea:focus-visible {
   cursor: pointer;
 }
 
+.audio-language-picker {
+  margin: 11px 19px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #59677c;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.audio-language-options {
+  padding: 3px;
+  display: inline-flex;
+  border: 1px solid #e1e5ec;
+  border-radius: 8px;
+  background: #f7f8fa;
+}
+
+.audio-language-options button {
+  min-width: 56px;
+  height: 27px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 5px;
+  color: #8a95a7;
+  background: transparent;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 620;
+}
+
+.audio-language-options button.active {
+  color: #405fd0;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(25, 42, 73, .12);
+}
+
 .upload-zone:hover {
   border-color: #8ea0ee;
   background: #f9faff;
@@ -3230,7 +3268,7 @@ textarea:focus-visible {
   .health-score div { display: none; }
   .metric { min-width: 72px; }
   .card-heading { padding-inline: 14px; }
-  .meeting-tabs, .notes-input, .upload-zone { margin-inline: 14px; }
+  .meeting-tabs, .notes-input, .upload-zone, .audio-language-picker { margin-inline: 14px; }
   .meeting-footer { padding-inline: 14px; }
   .agent-steps span { font-size: 0; }
   .agent-steps b { width: 13px; }
