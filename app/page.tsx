@@ -243,7 +243,7 @@ export default function Home() {
   const [apiProvider, setApiProvider] = useState<"openai" | "agnes">("agnes");
   const [transcriptionConfigured, setTranscriptionConfigured] = useState(false);
   const [transcriptionProvider, setTranscriptionProvider] = useState<
-    "whisper.cpp" | "openai" | null
+    "whisper.cpp" | "openai" | "groq" | null
   >(null);
   const [localAsrEnabled, setLocalAsrEnabled] = useState(false);
   const [localAsrReady, setLocalAsrReady] = useState(false);
@@ -420,7 +420,7 @@ export default function Home() {
             configured?: boolean;
             provider?: "openai" | "agnes";
             transcriptionConfigured?: boolean;
-            transcriptionProvider?: "whisper.cpp" | "openai" | null;
+            transcriptionProvider?: "whisper.cpp" | "openai" | "groq" | null;
             localAsrEnabled?: boolean;
             localAsrReady?: boolean;
           }) => {

@@ -184,7 +184,7 @@ To deploy on Render:
 
 1. Create a new **Blueprint** from this GitHub repository. / 从此 GitHub 仓库新建 **Blueprint**。
 2. Enter `AGNES_API_KEY` when Render prompts for secrets. / 在 Render 提示时填写 `AGNES_API_KEY`。
-3. Enter `OPENAI_TRANSCRIPTION_API_KEY` to enable uploaded-audio transcription. / 如需在线转写上传录音，填写 `OPENAI_TRANSCRIPTION_API_KEY`。
+3. Enter `GROQ_API_KEY` to enable uploaded-audio transcription with Groq's free tier. / 如需通过 Groq 免费层在线转写上传录音，填写 `GROQ_API_KEY`。
 4. After the first deployment succeeds, add the generated URL to the blank demo link at the top of this README. / 首次部署成功后，将生成的网址补到 README 顶部的空白体验链接。
 
 The project also produces a Cloudflare Workers-compatible build:

@@ -2,10 +2,13 @@ import {
   DEFAULT_LOCAL_ASR_URL,
   getAIProvider,
   getTextModel,
+  getTranscriptionModel,
+  getTranscriptionProvider,
 } from "../../../lib/openai";
 
 export async function GET() {
   const provider = getAIProvider();
+  const cloudTranscriptionProvider = getTranscriptionProvider();
   const localAsrUrl =
     process.env.LOCAL_ASR_URL?.trim() || DEFAULT_LOCAL_ASR_URL;
   let localAsrReady = false;
@@ -23,8 +26,10 @@ export async function GET() {
   }
 
   const remoteTranscriptionReady = Boolean(
-    process.env.OPENAI_TRANSCRIPTION_API_KEY?.trim() ||
-      (provider === "openai" && process.env.OPENAI_API_KEY?.trim()),
+    cloudTranscriptionProvider === "groq"
+      ? process.env.GROQ_API_KEY?.trim()
+      : process.env.OPENAI_TRANSCRIPTION_API_KEY?.trim() ||
+          (provider === "openai" && process.env.OPENAI_API_KEY?.trim()),
   );
 
   return Response.json({
@@ -38,13 +43,13 @@ export async function GET() {
     transcriptionProvider: localAsrReady
       ? "whisper.cpp"
       : remoteTranscriptionReady
-        ? "openai"
+        ? cloudTranscriptionProvider
         : null,
     localAsrEnabled: process.env.LOCAL_ASR_ENABLED === "true",
     localAsrReady,
     transcriptionModel:
       localAsrReady
         ? process.env.LOCAL_ASR_MODEL ?? "small-q5_1"
-        : process.env.OPENAI_TRANSCRIPTION_MODEL ?? "gpt-4o-transcribe",
+        : getTranscriptionModel(),
   });
 }
