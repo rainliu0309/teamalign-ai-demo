@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: teamalign-ai-demo
+    name: teamalign-ai
     runtime: node
     plan: free
     region: ohio
