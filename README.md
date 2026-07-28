@@ -3,7 +3,7 @@
 > A lightweight AI project tool that turns meetings into tasks, risk alerts, and reports.<br>
 > 将会议内容转化为任务、风险预警和项目报告的轻量化 AI 项目协作工具。
 
-### [🚀 Live Demo · 在线体验]()
+### [🚀 Live Demo · 在线体验](https://teamalign-ai-demo.onrender.com/)
 
 TeamAlign AI turns meeting recordings and written notes into tasks, risk alerts, and standardized project reports in one responsive workspace.
 
@@ -160,7 +160,7 @@ Read the matching transcripts in [`test/README.md`](./test/README.md).
 
 ## Deployment · 部署说明
 
-**Production URL · 线上地址:**
+**Production URL · 线上地址:** [https://teamalign-ai-demo.onrender.com/](https://teamalign-ai-demo.onrender.com/)
 
 The repository includes a Render Blueprint in [`render.yaml`](./render.yaml). It creates a free Node web service that builds the application, starts it with `npm run start`, and checks `/api/health`.
 
