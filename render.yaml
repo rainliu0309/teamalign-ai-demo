@@ -21,7 +21,9 @@ services:
         sync: false
       - key: LOCAL_ASR_ENABLED
         value: "false"
-      - key: OPENAI_TRANSCRIPTION_MODEL
-        value: gpt-4o-transcribe
-      - key: OPENAI_TRANSCRIPTION_API_KEY
+      - key: TRANSCRIPTION_PROVIDER
+        value: groq
+      - key: GROQ_TRANSCRIPTION_MODEL
+        value: whisper-large-v3-turbo
+      - key: GROQ_API_KEY
         sync: false

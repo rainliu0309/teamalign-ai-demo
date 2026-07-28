@@ -1,11 +1,11 @@
 import {
   apiErrorResponse,
   DEFAULT_LOCAL_ASR_URL,
-  DEFAULT_TRANSCRIPTION_MODEL,
   extractJson,
   getTextClient,
   getTextModel,
   getTranscriptionClient,
+  getTranscriptionModel,
 } from "../../../lib/openai";
 import {
   isAnalysisDraft,
@@ -165,9 +165,7 @@ export async function POST(request: Request) {
         const transcription: unknown =
           await getTranscriptionClient().audio.transcriptions.create({
             file: audio,
-            model:
-              process.env.OPENAI_TRANSCRIPTION_MODEL ??
-              DEFAULT_TRANSCRIPTION_MODEL,
+            model: getTranscriptionModel(),
             response_format: "text",
             prompt:
               language === "zh"
