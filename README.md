@@ -217,3 +217,5 @@ This project is publicly available for viewing and evaluation only. No permissio
 版权所有 © 2026 Ruiying (Rain) Liu。**保留所有权利。**
 
 本项目仅供公开查看与评估。未经版权所有者事先书面许可，不得复制、修改、分发、再许可、出售、商业使用或创作衍生作品。本仓库**不属于开源软件**。
+
+See [COPYRIGHT](./COPYRIGHT) for the complete notice. / 完整声明请参阅 [COPYRIGHT](./COPYRIGHT)。
